@@ -1,4 +1,4 @@
-import { debounceTime, fromEvent, map, mergeAll } from "rxjs";
+import { debounceTime, fromEvent, map } from "rxjs";
 import { ajax } from "rxjs/ajax";
 
 const body = document.querySelector('body');
@@ -13,10 +13,10 @@ input$.pipe(
   debounceTime(500),
   map(event => {
     const user = event.target['value'];
-    return ajax.getJSON(`https://api.github.com/search/users?q=${ user }`);
-  }),
-  mergeAll(),
-  map( UserGitHub => UserGitHub['items'] )
+    return ajax.getJSON(`https://api.github.com/users/${user}`);
+  })
 ).subscribe({
-  next: (response) => console.log(response)
+  next: (response) => {
+    response.subscribe(console.log);
+  }
 }); // { target: input, type: 'input', ... }
